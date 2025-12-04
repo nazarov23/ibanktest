@@ -1,0 +1,36 @@
+plugins {
+    id 'java'
+    id 'io.freefair.lombok' version '6.0.0-m2'  // Для @Value аннотаций
+}
+
+group = 'ru.netology'
+version = '1.0-SNAPSHOT'
+
+sourceCompatibility = 11
+compileJava.options.encoding = "UTF-8"
+compileTestJava.options.encoding = "UTF-8"
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    // Основная зависимость для тестов
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.9.0'
+
+    // Для UI-тестирования (вход через веб-форму)
+    testImplementation 'com.codeborne:selenide:6.17.2'
+
+    // Для работы с API (создание пользователей)
+    testImplementation 'io.rest-assured:rest-assured:5.5.0'
+    testImplementation 'com.google.code.gson:gson:2.10.1'
+
+    // Для валидации JSON (опционально)
+    testImplementation 'io.rest-assured:json-schema-validator:5.5.0'
+}
+
+test {
+    useJUnitPlatform()
+    // Для запуска в CI (без GUI браузера)
+    systemProperty 'selenide.headless', System.getProperty('selenide.headless', 'true')
+}
