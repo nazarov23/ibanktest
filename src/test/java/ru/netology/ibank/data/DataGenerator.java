@@ -6,21 +6,21 @@ import io.restassured.filter.log.LogDetail;
 import io.restassured.http.ContentType;
 import io.restassured.specification.RequestSpecification;
 import lombok.Value;
-import java.util.Random;
+import com.github.javafaker.Faker;
+import java.util.Locale;
 
 import static io.restassured.RestAssured.given;
 
 public class DataGenerator {
     private static final RequestSpecification requestSpec = new RequestSpecBuilder()
-        .setBaseUri("http://localhost")
-        .setPort(9999)
-        .setAccept(ContentType.JSON)
-        .setContentType(ContentType.JSON)
-        .log(LogDetail.ALL)
-        .build();
+            .setBaseUri("http://localhost")
+            .setPort(9999)
+            .setAccept(ContentType.JSON)
+            .setContentType(ContentType.JSON)
+            .build();
 
     private static final Gson gson = new Gson();
-    private static final Random random = new Random();
+    private static final Faker faker = new Faker(new Locale("ru"));
 
     private DataGenerator() {}
 
@@ -39,40 +39,48 @@ public class DataGenerator {
 
     public static void setUpUser(RegistrationDto user) {
         given()
-            .spec(requestSpec)
-            .body(gson.toJson(user))
-        .when()
-            .post("/api/system/users")
-        .then()
-            .statusCode(200);
+                .spec(requestSpec)
+                .body(gson.toJson(user))
+                .when()
+                .post("/api/system/users")
+                .then()
+                .statusCode(200);
     }
+
     public static RegistrationDto generateUser(String status) {
-        String login = "user" + System.currentTimeMillis() + random.nextInt(1000);
-        String password = "pass" + System.currentTimeMillis();
+        // Генерация логина с помощью Faker
+        String login = faker.name().username()
+                .toLowerCase()
+                .replaceAll("[^a-zа-я0-9._]", "_")
+                + faker.number().digits(3);
+
+        // Генерация пароля с помощью Faker
+        String password = faker.internet().password(8, 16, true, true, true);
+
         return new RegistrationDto(login, password, status);
     }
 
     public static AuthInfo getRegisteredActiveUser() {
-        String login = "user" + System.currentTimeMillis() + random.nextInt(1000);
-        String password = "pass" + System.currentTimeMillis();
-        RegistrationDto user = new RegistrationDto(login, password, "active");
+        // Используем generateUser вместо дублирования кода
+        RegistrationDto user = generateUser("active");
         setUpUser(user);
-        return new AuthInfo(login, password);
+        return new AuthInfo(user.getLogin(), user.getPassword());
     }
 
     public static AuthInfo getRegisteredBlockedUser() {
-        String login = "blocked" + System.currentTimeMillis() + random.nextInt(1000);
-        String password = "pass" + System.currentTimeMillis();
-        RegistrationDto user = new RegistrationDto(login, password, "blocked");
+        // Используем generateUser вместо дублирования кода
+        RegistrationDto user = generateUser("blocked");
         setUpUser(user);
-        return new AuthInfo(login, password);
+        return new AuthInfo(user.getLogin(), user.getPassword());
     }
 
     public static String generateInvalidLogin() {
-        return "invalid" + System.currentTimeMillis();
+        // Генерация невалидного логина с помощью Faker
+        return "invalid_" + faker.name().username() + "_" + faker.number().digits(6);
     }
 
     public static String generateInvalidPassword() {
-        return "wrong" + System.currentTimeMillis();
+        // Генерация невалидного пароля с помощью Faker
+        return "wrong_" + faker.internet().password() + "_" + faker.number().digits(4);
     }
 }

@@ -21,17 +21,6 @@ jobs:
       - name: Start SUT
         run: |
           java -jar ./artifacts/app-ibank.jar -P:profile=test &
-          sleep 10  # Даем время приложению запуститься
 
       - name: Test with Gradle
         run: ./gradlew test --info
-
-      - name: Upload test reports
-        if: always()  # Загружаем отчеты даже если тесты упали
-        uses: actions/upload-artifact@v4  # Исправленная версия v4
-        with:
-          name: test-reports-${{ github.run_id }}  # Уникальное имя для каждого запуска
-          path: |
-            build/reports/tests/
-            build/test-results/
-          retention-days: 30  # Артефакты будут храниться 30 дней
