@@ -16,7 +16,7 @@ repositories {
 
 dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter:5.9.0'
-    testImplementation 'com.codeborne:selenide:6.17.2'
+    testImplementation 'com.codeborne:selenide:6.19.1'  // Обновляем до последней версии
     testImplementation 'io.rest-assured:rest-assured:5.5.0'
     testImplementation 'com.google.code.gson:gson:2.10.1'
     testImplementation 'com.github.javafaker:javafaker:1.0.2'
@@ -28,15 +28,22 @@ dependencies {
 test {
     useJUnitPlatform()
 
+    // Обязательно для работы WebDriver Manager
+    systemProperty 'wdm.chromeDriverVersion', 'LATEST'
+    systemProperty 'wdm.architecture', 'X64'
+    systemProperty 'wdm.proxy', ''
+    systemProperty 'wdm.proxyUser', ''
+    systemProperty 'wdm.proxyPass', ''
+    systemProperty 'wdm.timeout', '30'
+    systemProperty 'wdm.gitHubTokenName', ''
+    systemProperty 'wdm.gitHubTokenSecret', ''
+
     // Настройки для CI/CD среды
-    systemProperty "selenide.headless", "true"
-    systemProperty "chromeoptions.args", "--no-sandbox,--disable-dev-shm-usage,--disable-gpu,--remote-allow-origins=*"
-    systemProperty "webdriver.chrome.driver", ""
+    systemProperty 'selenide.headless', 'true'
+    systemProperty 'chromeoptions.args', '--no-sandbox,--disable-dev-shm-usage,--disable-gpu,--remote-allow-origins=*'
+    systemProperty 'selenide.timeout', '10000'
+    systemProperty 'selenide.pageLoadStrategy', 'normal'
 
     // Настройка для Selenium 4+
-    systemProperty "webdriver.http.factory", "jdk-http-client"
-
-    // Таймауты
-    systemProperty "selenide.timeout", "10000"
-    systemProperty "selenide.pageLoadStrategy", "normal"
+    systemProperty 'webdriver.http.factory', 'jdk-http-client'
 }
