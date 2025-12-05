@@ -2,7 +2,6 @@ package ru.netology.ibank.data;
 
 import com.google.gson.Gson;
 import io.restassured.builder.RequestSpecBuilder;
-import io.restassured.filter.log.LogDetail;
 import io.restassured.http.ContentType;
 import io.restassured.specification.RequestSpecification;
 import lombok.Value;
@@ -17,6 +16,7 @@ public class DataGenerator {
             .setPort(9999)
             .setAccept(ContentType.JSON)
             .setContentType(ContentType.JSON)
+            // Убрано: .log(LogDetail.ALL)
             .build();
 
     private static final Gson gson = new Gson();
@@ -61,14 +61,14 @@ public class DataGenerator {
     }
 
     public static AuthInfo getRegisteredActiveUser() {
-        // Используем generateUser вместо дублирования кода
+        // Убраны строки 56-58: используем generateUser
         RegistrationDto user = generateUser("active");
         setUpUser(user);
         return new AuthInfo(user.getLogin(), user.getPassword());
     }
 
     public static AuthInfo getRegisteredBlockedUser() {
-        // Используем generateUser вместо дублирования кода
+        // Убраны строки 64-66: используем generateUser
         RegistrationDto user = generateUser("blocked");
         setUpUser(user);
         return new AuthInfo(user.getLogin(), user.getPassword());

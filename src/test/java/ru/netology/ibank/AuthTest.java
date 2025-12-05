@@ -11,7 +11,10 @@ public class AuthTest {
 
     @BeforeAll
     static void setUpAll() {
+        Configuration.browser = "chrome";
         Configuration.browserSize = "1920x1080";
+        // Убрано: Configuration.headless = true;
+        Configuration.timeout = 15000;
     }
 
     @BeforeEach

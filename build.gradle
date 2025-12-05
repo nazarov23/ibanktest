@@ -25,4 +25,6 @@ dependencies {
 
 test {
     useJUnitPlatform()
+    // Убрано значение по умолчанию 'true'
+    systemProperty 'selenide.headless', System.getProperty('selenide.headless')
 }
